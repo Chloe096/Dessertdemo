@@ -358,7 +358,11 @@ const DEMO=[
 ["FB","SN37357","179 Quốc Lộ 50, P.Bình Đông","1","20h00","Set 4 mica"],
 ];
 function rowsToOrders(rows){ return rows.map(c=>({plat:c[0]||"",code:c[1]||"",name:"",phone:"",addr:c[2]||"",weight:c[3]||"",time:c[4]||"",xe:"",prod:c[5]||""})); }
-function loadDemo(){ document.getElementById("input").value=""; run(rowsToOrders(DEMO)); }
+// Điền data mẫu vào ô nhập (không tự chạy) — người dùng tự bấm Đề xuất
+function loadDemo(){
+  document.getElementById("input").value = DEMO.map(r=>r.join("\t")).join("\n");
+  document.getElementById("status").textContent = "Đã điền data mẫu vào ô — bấm ⚡ Đề xuất để chạy.";
+}
 
 function clearAll(){ document.getElementById("input").value=""; document.getElementById("result").innerHTML=""; document.getElementById("kpis").innerHTML=""; document.getElementById("status").textContent=""; document.getElementById("modeNote").textContent=""; }
 function loadFile(f){ if(!f) return; const r=new FileReader();
