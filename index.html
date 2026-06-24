@@ -76,6 +76,7 @@ tbody tr:last-child td{ border-bottom:0; } tbody tr:hover{ background:#fafbfc; }
     </div>
     <div class="row" style="margin-bottom:11px">
       <button class="btn btn-primary" onclick="document.getElementById('file').click()">📁 Tải file CSV</button>
+      <button class="btn btn-ghost" onclick="loadDemo()">Dùng data mẫu</button>
       <button class="btn btn-ghost" onclick="clearAll()">Xóa</button>
       <input type="file" id="file" accept=".csv,.txt,.tsv" style="display:none" onchange="loadFile(this.files[0])">
       <span class="muted" id="status"></span>
@@ -224,7 +225,6 @@ async function aiClassify(orders){
     let text = typeof r==="string" ? r : (r && (r.text || (r.content && r.content[0] && r.content[0].text))) || JSON.stringify(r);
     const m=text.match(/\[[\s\S]*\]/); if(!m) throw new Error("Không đọc được JSON từ AI"); return JSON.parse(m[0]);
   }
-  // chạy trên web -> gọi backend
   const resp=await fetch("/api/classify",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({items,depot:DEPOT})});
   const data=await resp.json();
   if(!resp.ok || data.error) throw new Error(data.error||("HTTP "+resp.status));
@@ -291,9 +291,9 @@ function setMode(mode,note){
   document.getElementById("modeNote").textContent=note||"";
 }
 
-async function run(){
+async function run(preset){
   readSettings();
-  const orders=parseInput(document.getElementById("input").value);
+  const orders = Array.isArray(preset) ? preset : parseInput(document.getElementById("input").value);
   const res=document.getElementById("result"), kp=document.getElementById("kpis");
   if(!orders.length){ res.innerHTML="<div class='card'>Chưa có đơn. Dán dữ liệu vào ô rồi bấm Đề xuất.</div>"; kp.innerHTML=""; setMode("rule",""); return; }
 
@@ -333,6 +333,32 @@ async function run(){
     <tbody>${rows}</tbody></table></div>`;
   document.getElementById("status").textContent=`Đã phân tích ${orders.length} đơn.`;
 }
+
+// Data mẫu (nạp thẳng ra bảng, không đổ vào ô nhập)
+const DEMO=[
+["SHOPEE HỎA TỐC","260620JM41UBTW","Số 114, Đường Số 14, Phường Bình Hưng Hòa, TP HCM","1","Trước 20h","NHÃN (330GR)"],
+["FB","SN37351","252 Lê Thánh Tôn, P.Bến Thành, Q.1","1","Trước 9h","CHERRY (330GR) TROPICAL (330GR) MELON (330GR)"],
+["FB","SN37359","352 Phan Xích Long, Phú Nhuận","1","10h","Sầu riêng (330gr)"],
+["FB","SN37342","688/57/50B Lê Đức Thọ, An Hội Đông","1","16h","Set 9 ly mica"],
+["FB","SN37365","854/40 Thống Nhất, An Hội Đông","1","17-18h","Set 4 ly mica"],
+["FB","SN37377","47 Phổ Quang, P.2, Tân Bình","1","13h","Melon (330gr)"],
+["FB","SN37378","346 Bến Vân Đồn, P.1, Q.4","1","13h","Melon (330gr)"],
+["FB","SN37381","163 Cô Giang, Cầu Ông Lãnh","1","19h","Bơ (330gr)"],
+["FB","SN37387","671 Thống Nhất, Gò Vấp","1","17h30","Set 4 ly mica + burn cheese (245gr)"],
+["FB","SN37392","526 Phan Văn Trị, P.7, Q.5","1","20h30","Sầu riêng (330gr)"],
+["FB","SN37295","167 Pasteur, P.Võ Thị Sáu, Q.3","1","15h","Tiramisu B52 (500gr)"],
+["FB","SN37321","Z06 Số 13, Tân Thuận, Q.7","1","17h","Melon nguyên ổ (12cm)"],
+["FB","SN37322","Chung cư Vĩnh Tường, Q.Bình Tân","1","19h","Bơ (330gr) + Cherry (330gr)"],
+["FB","SN37323","36 Mai Chí Thọ, P.Bình Trưng","1","20h","Nhãn (550gr)"],
+["FB","SN37330","79/35 Âu Cơ, P.14, Q.11","1","18h30","Cherry (330gr)"],
+["FB","SN37340","8/2 Phan Văn Hớn, Bà Điểm, Hóc Môn","1","19h30","Sầu riêng + Melon + Cherry (330gr)"],
+["FB","SN37344","408 Nguyễn Oanh, Gò Vấp","1","19h","Burn cheese (245gr)"],
+["FB","SN37346","Landmark 6, Bình Thạnh","1","13h","Burn cheese mix vị"],
+["FB","SN37350","38/8 Bùi Văn Ngữ, P.Tân Chánh Hiệp, Q.12","1","15h","Sầu (550gr) + cherry + tiramisu (330gr)"],
+["FB","SN37357","179 Quốc Lộ 50, P.Bình Đông","1","20h00","Set 4 mica"],
+];
+function rowsToOrders(rows){ return rows.map(c=>({plat:c[0]||"",code:c[1]||"",name:"",phone:"",addr:c[2]||"",weight:c[3]||"",time:c[4]||"",xe:"",prod:c[5]||""})); }
+function loadDemo(){ document.getElementById("input").value=""; run(rowsToOrders(DEMO)); }
 
 function clearAll(){ document.getElementById("input").value=""; document.getElementById("result").innerHTML=""; document.getElementById("kpis").innerHTML=""; document.getElementById("status").textContent=""; document.getElementById("modeNote").textContent=""; }
 function loadFile(f){ if(!f) return; const r=new FileReader();
