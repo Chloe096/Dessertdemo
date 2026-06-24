@@ -2,10 +2,23 @@
 // Chạy: ANTHROPIC_API_KEY=sk-... node server.js
 const express = require("express");
 const path = require("path");
+const fs = require("fs");
 
 const app = express();
 app.use(express.json({ limit: "1mb" }));
-app.use(express.static(path.join(__dirname, "public")));
+
+// Tìm thư mục chứa index.html dù chạy ở cấu trúc nào
+const CANDIDATES = [
+  path.join(__dirname, "public"),
+  __dirname,
+  path.join(process.cwd(), "public"),
+  process.cwd(),
+];
+const PUBLIC_DIR = CANDIDATES.find((d) => fs.existsSync(path.join(d, "index.html"))) || path.join(__dirname, "public");
+const INDEX = path.join(PUBLIC_DIR, "index.html");
+
+app.use(express.static(PUBLIC_DIR));
+app.get("/", (_req, res) => res.sendFile(INDEX));
 
 const API_KEY = process.env.ANTHROPIC_API_KEY;
 const MODEL = process.env.CLAUDE_MODEL || "claude-haiku-4-5-20251001";
@@ -54,7 +67,14 @@ app.post("/api/classify", async (req, res) => {
   }
 });
 
-app.get("/health", (_req, res) => res.json({ ok: true, model: MODEL, hasKey: !!API_KEY }));
+app.get("/health", (_req, res) => res.json({ ok: true, model: MODEL, hasKey: !!API_KEY, publicDir: PUBLIC_DIR }));
+
+// mọi đường dẫn khác (không phải /api) -> trả về trang chính
+app.get(/^\/(?!api).*/, (_req, res) => res.sendFile(INDEX));
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`Server chạy tại http://localhost:${PORT}  (model: ${MODEL})`));
+app.listen(PORT, () => {
+  console.log(`Server chạy tại http://localhost:${PORT}  (model: ${MODEL})`);
+  console.log(`Phục vụ web từ: ${PUBLIC_DIR}`);
+  if (!fs.existsSync(INDEX)) console.warn("CẢNH BÁO: không tìm thấy index.html — kiểm tra thư mục public.");
+});
