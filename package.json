@@ -1,0 +1,15 @@
+{
+  "name": "agent-giao-hang",
+  "version": "1.0.0",
+  "description": "AI agent đề xuất hãng giao & so sánh giá (Xanh SM / Grab / Ahamove)",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "express": "^4.19.2"
+  }
+}

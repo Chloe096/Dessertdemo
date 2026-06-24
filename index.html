@@ -1,0 +1,346 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AI Agent — Đề xuất hãng giao & so sánh giá</title>
+<style>
+:root{ color-scheme:light;
+  --bg:#f5f6f8; --card:#fff; --line:#e7e9ee; --ink:#1b2027; --soft:#6b7480;
+  --xanh:#16a34a; --grab:#0a8a3b; --aha:#d97316; --blue:#2563eb;
+}
+*{ box-sizing:border-box; }
+body{ margin:0; background:var(--bg); color:var(--ink);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif; font-size:14px; line-height:1.5; }
+.wrap{ max-width:1140px; margin:0 auto; padding:24px 18px 64px; }
+h1{ font-size:21px; margin:0 0 2px; letter-spacing:-.01em; }
+.card{ background:var(--card); border:1px solid var(--line); border-radius:14px; padding:16px 18px; margin-bottom:16px; }
+.btn{ border:0; border-radius:10px; padding:9px 15px; font-size:13px; font-weight:600; cursor:pointer; }
+.btn-primary{ background:var(--blue); color:#fff; } .btn-primary:hover{ filter:brightness(.95); }
+.btn-primary[disabled]{ opacity:.6; cursor:default; }
+.btn-ghost{ background:#eef1f5; color:#2b3038; } .btn-ghost:hover{ background:#e4e8ed; }
+.row{ display:flex; gap:9px; flex-wrap:wrap; align-items:center; }
+.drop{ border:1.5px dashed #c7cfd8; border-radius:12px; padding:13px; background:#fbfcfe; }
+textarea{ width:100%; min-height:84px; resize:vertical; padding:10px 12px; border:1px solid #d8dde3; border-radius:9px; font-family:inherit; font-size:13px; background:#fff; }
+summary{ cursor:pointer; font-weight:600; color:var(--blue); font-size:13px; }
+.muted{ color:var(--soft); font-size:12px; }
+.modebar{ display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:11px; }
+.modetag{ font-size:12px; font-weight:700; padding:3px 10px; border-radius:999px; }
+.m-ai{ background:#ede9fe; color:#6d28d9; } .m-rule{ background:#eef1f5; color:#475569; }
+.chk{ display:flex; align-items:center; gap:6px; font-size:12.5px; color:#444c55; }
+
+.kpis{ display:flex; gap:12px; flex-wrap:wrap; margin-bottom:16px; }
+.kpi{ background:var(--card); border:1px solid var(--line); border-radius:14px; padding:12px 16px; min-width:150px; flex:1; }
+.kpi .v{ font-size:20px; font-weight:750; } .kpi .k{ font-size:12px; color:var(--soft); margin-top:1px; }
+.kpi.green{ background:#effaf2; border-color:#c8ecd3; } .kpi.green .v{ color:var(--xanh); }
+
+.tbl-wrap{ overflow:auto; border:1px solid var(--line); border-radius:14px; background:#fff; }
+table{ border-collapse:collapse; width:100%; font-size:13px; }
+thead th{ background:#f3f5f8; font-weight:650; color:#3a424c; padding:11px 12px; text-align:left; border-bottom:1px solid var(--line); white-space:nowrap; position:sticky; top:0; z-index:1; }
+tbody td{ padding:11px 12px; border-bottom:1px solid #f0f2f5; vertical-align:top; }
+tbody tr:last-child td{ border-bottom:0; } tbody tr:hover{ background:#fafbfc; }
+.code{ font-weight:700; } .plat{ color:var(--soft); font-size:11.5px; } .prod{ color:#414a54; font-size:12px; margin-top:2px; }
+.addr{ max-width:230px; } .meta{ color:var(--soft); font-size:11.5px; margin-top:2px; }
+.th-c{ text-align:right; } .th-xanh{ color:var(--xanh); } .th-grab{ color:var(--grab); } .th-aha{ color:var(--aha); }
+.pcell{ text-align:right; white-space:nowrap; font-variant-numeric:tabular-nums; }
+.pcell .p{ font-weight:600; } .pcell.best{ background:#effaf2; } .pcell.best .p{ color:var(--xanh); font-weight:750; }
+.pcell.rec{ box-shadow:inset 3px 0 0 var(--blue); }
+.badge{ display:inline-block; font-size:9.5px; font-weight:700; padding:1px 5px; border-radius:5px; margin-top:3px; }
+.b-best{ background:#d8f3e0; color:var(--xanh); } .b-rec{ background:#dbe7ff; color:var(--blue); }
+.na{ color:#c2c8cf; }
+.tag{ display:inline-block; padding:3px 11px; border-radius:999px; font-size:12.5px; font-weight:700; white-space:nowrap; }
+.t-xanh{ background:#e3f6ea; color:var(--xanh); } .t-grab{ background:#e1f4e8; color:var(--grab); } .t-aha{ background:#fdeede; color:var(--aha); }
+.t-shopee{ background:#fdeae3; color:#d2491a; } .t-tiktok{ background:#eef0f3; color:#1c2024; }
+.reason{ color:var(--soft); font-size:11.5px; margin-top:4px; max-width:230px; }
+
+.set-grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(190px,1fr)); gap:12px; margin-top:12px; }
+.set-box{ border:1px solid var(--line); border-radius:11px; padding:10px 12px; }
+.set-box h4{ margin:0 0 8px; font-size:12.5px; }
+.set-box label{ display:flex; justify-content:space-between; align-items:center; gap:8px; font-size:12px; color:#444c55; margin:5px 0; }
+.set-box input{ width:88px; padding:5px 7px; border:1px solid #d8dde3; border-radius:7px; font-size:12px; text-align:right; }
+.note{ font-size:11.5px; color:var(--soft); margin-top:10px; }
+.loading{ padding:20px; text-align:center; color:var(--soft); }
+.spin{ display:inline-block; width:15px; height:15px; border:2px solid #d6dae0; border-top-color:var(--blue); border-radius:50%; animation:s .7s linear infinite; vertical-align:-3px; margin-right:7px; }
+@keyframes s{ to{ transform:rotate(360deg); } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>🛵 Đề xuất hãng giao &amp; so sánh giá</h1>
+
+  <div class="card">
+    <div class="modebar">
+      <span id="modeTag" class="modetag m-rule">⚙️ Quy tắc</span>
+      <label class="chk"><input type="checkbox" id="useAI" checked> 🤖 Dùng AI (Claude) để phân loại &amp; suy luận</label>
+      <span class="muted" id="modeNote"></span>
+    </div>
+    <div class="row" style="margin-bottom:11px">
+      <button class="btn btn-primary" onclick="document.getElementById('file').click()">📁 Tải file CSV</button>
+      <button class="btn btn-ghost" onclick="clearAll()">Xóa</button>
+      <input type="file" id="file" accept=".csv,.txt,.tsv" style="display:none" onchange="loadFile(this.files[0])">
+      <span class="muted" id="status"></span>
+    </div>
+    <div class="drop">
+      <textarea id="input" placeholder="Dán đơn hàng từ Excel vào đây (bôi đen các dòng rồi Ctrl/⌘+V)…"></textarea>
+    </div>
+    <div class="row" style="margin-top:11px">
+      <button class="btn btn-primary" id="goBtn" onclick="run()">⚡ Đề xuất hãng giao</button>
+      <details><summary>Cột cần có</summary>
+        <div class="muted" style="margin-top:6px">NỀN TẢNG · MÃ ĐƠN · ĐỊA CHỈ · TRỌNG LƯỢNG · GIỜ GIAO · TÊN HÀNG</div>
+      </details>
+    </div>
+  </div>
+
+  <div class="card">
+    <details>
+      <summary>⚙️ Chỉnh đơn giá &amp; khoảng cách</summary>
+      <div class="set-grid">
+        <div class="set-box"><h4>🟢 Xanh SM (xe nhỏ)</h4>
+          <label>2km đầu (đ) <input type="number" id="x_b" value="14000"></label>
+          <label>Mỗi km thêm (đ) <input type="number" id="x_k" value="4800"></label>
+          <label>Giảm đối tác (%) <input type="number" id="x_d" value="0"></label></div>
+        <div class="set-box"><h4>🟢 Grab</h4>
+          <label>2km đầu (đ) <input type="number" id="g_b" value="19000"></label>
+          <label>Mỗi km thêm (đ) <input type="number" id="g_k" value="5000"></label>
+          <label>Giảm đối tác (%) <input type="number" id="g_d" value="0"></label></div>
+        <div class="set-box"><h4>🟠 Ahamove (xe máy & van)</h4>
+          <label>Xe máy: 2km đầu (đ) <input type="number" id="a_b" value="16000"></label>
+          <label>Xe máy: mỗi km (đ) <input type="number" id="a_k" value="5400"></label>
+          <label>Van: mở cửa (đ) <input type="number" id="v_b" value="70000"></label>
+          <label>Van: mỗi km (đ) <input type="number" id="v_k" value="9000"></label>
+          <label>Giảm đối tác (%) <input type="number" id="a_d" value="0"></label></div>
+        <div class="set-box"><h4>📏 Khoảng cách ước (km)</h4>
+          <label>Gần / trung tâm <input type="number" id="km_near" value="4"></label>
+          <label>Trung bình <input type="number" id="km_mid" value="7"></label>
+          <label>Xa (ngoại thành) <input type="number" id="km_far" value="13"></label></div>
+        <div class="set-box"><h4>⏰ Giờ cao điểm</h4>
+          <label>Phụ phí (%) <input type="number" id="peak_pct" value="15"></label>
+          <div class="muted" style="margin-top:4px">11–13h30 &amp; 17–20h30</div></div>
+      </div>
+      <div class="note">Giá = (2km đầu + mỗi km thêm) × phụ phí cao điểm, rồi trừ <b>% giảm đối tác</b> (giá hợp đồng/đăng ký dịch vụ của shop). Khi dùng AI, km do Claude ước theo địa chỉ; chế độ quy tắc thì ước theo khu vực.</div>
+    </details>
+  </div>
+
+  <div id="kpis"></div>
+  <div id="result"></div>
+</div>
+
+<script>
+const DEPOT="308 Phan Xích Long, P.7, Phú Nhuận, TP HCM (tiệm bánh Sona)";
+const W_VAN=8, W_BIG=4;
+const FAR=["hóc môn","hoc mon","bà điểm","ba diem","củ chi","cu chi","quận 12","q.12","q12","bình tân","binh tan","bình chánh","binh chanh","nhà bè","nha be","thủ đức","thu duc","gò vấp","go vap","bình hưng hòa","binh hung hoa","an hội đông","an hoi dong","tân chánh hiệp","tan chanh hiep","quốc lộ 50","tân thuận","tan thuan","bình trưng","binh trung"];
+const CENTRAL=["quận 1","q.1","q1","bến thành","ben thanh","quận 3","q.3","q3","quận 4","q.4","q4","quận 5","q.5","q5","quận 10","q10","phú nhuận","phu nhuan","bình thạnh","binh thanh","tân bình","tan binh","phan xích long","phan xich long","cầu ông lãnh","cau ong lanh","cô giang","co giang","landmark","pasteur","lê thánh tôn","le thanh ton"];
+const FRAGILE=["bánh","banh","tiramisu","burn cheese","kem","panna","nguyên ổ","nguyen o"];
+const BULKY=["set","ly mica","mica","9 ly","4 ly"];
+
+let RATES, KM, PEAK;
+function readSettings(){
+  const g=id=>parseFloat(document.getElementById(id).value)||0;
+  RATES={ "Xanh SM":{b:g("x_b"),k:g("x_k"),disc:g("x_d")}, "Grab":{b:g("g_b"),k:g("g_k"),disc:g("g_d")},
+    "Ahamove":{b:g("a_b"),k:g("a_k"),disc:g("a_d")}, "Ahamove-van":{b:g("v_b"),k:g("v_k"),disc:g("a_d")} };
+  KM={ "trung tâm":g("km_near"), "khác":g("km_mid"), "xa":g("km_far") };
+  PEAK=1+g("peak_pct")/100;
+}
+const norm=s=>(s||"").toString().toLowerCase().trim();
+const vnd=n=>Math.round(n).toLocaleString("vi-VN")+"đ";
+const has=(t,a)=>a.some(k=>t.includes(k));
+function hour(t){ t=norm(t); let h=null;
+  let m=t.match(/(\d{1,2})\s*[:h]\s*(\d{2})?/); if(m) h=+m[1]+(m[2]?+m[2]/60:0);
+  else { m=t.match(/(\d{1,2})/); if(m) h=+m[1]; }
+  if(h===null) return null;
+  const pm=/pm|chiều|tối|trưa/.test(t), am=/am|sáng/.test(t);
+  if(pm && h<12) h+=12; if(am && h===12) h=0;
+  return h; }
+const peakOf=t=>{ const h=hour(t); return h!==null&&((h>=11&&h<=13.5)||(h>=17&&h<=20.5)); };
+const zoneOf=a=>{ a=norm(a); return has(a,FAR)?"xa":has(a,CENTRAL)?"trung tâm":"khác"; };
+function fare(key,km,peak){ const r=RATES[key]; let c=r.b+Math.max(0,km-2)*r.k; if(peak)c*=PEAK; c*=(1-(r.disc||0)/100); return Math.max(0,Math.round(c/500)*500); }
+
+// phân loại nền tảng & kích thước (luôn bằng quy tắc — chắc chắn)
+function platformOf(o){ const p=norm(o.plat)+" "+norm(o.xe); if(p.includes("shopee"))return "SHOPEE"; if(p.includes("tiktok"))return "TIKTOK"; return "TỰ ĐẶT"; }
+function sizeOf(o){ const w=parseFloat((o.weight||"").toString().replace(",","."))||0; return {w, veryLarge:w>=W_VAN, large:has(norm(o.prod),BULKY)||w>=W_BIG}; }
+
+function priceSet(km,peak,veryLarge,large){
+  const ahaKey=veryLarge?"Ahamove-van":"Ahamove";
+  const prices={ "Xanh SM": large?null:fare("Xanh SM",km,peak), "Grab": large?null:fare("Grab",km,peak), "Ahamove": fare(ahaKey,km,peak) };
+  let cheapest=null; for(const k in prices){ if(prices[k]!=null&&(cheapest===null||prices[k]<prices[cheapest]))cheapest=k; }
+  return {prices,cheapest,ahaLabel:veryLarge?"Ahamove (van)":"Ahamove"};
+}
+
+// QUY TẮC (fallback)
+function ruleDecide(o,sz,z,peak){
+  if(sz.large) return {carrier:"Ahamove",cls:"t-aha",reason:"Đơn lớn/cồng kềnh"+(sz.w>=W_BIG?` (${sz.w}kg)`:"")+" → Ahamove "+(sz.veryLarge?"van":"xe máy")+" (Xanh SM chỉ xe nhỏ)."};
+  if(z==="xa") return {carrier:"Grab",cls:"t-grab",reason:peak?"Khu xa + giờ cao điểm → Grab dễ bắt xe vùng ven.":"Khu xa → Grab phủ rộng ngoại thành."};
+  if(has(norm(o.prod),FRAGILE)) return {carrier:"Xanh SM",cls:"t-xanh",reason:"Hàng dễ vỡ, trung tâm → Xanh SM giao nhẹ nhàng, giá tốt."};
+  if(peak) return {carrier:"Grab",cls:"t-grab",reason:"Trung tâm + giờ cao điểm → Grab nhiều xe, ít chờ."};
+  return {carrier:"Xanh SM",cls:"t-xanh",reason:"Gần depot, giờ thường → Xanh SM rẻ & tin cậy."};
+}
+const clsOf=c=>({"Xanh SM":"t-xanh","Grab":"t-grab","Ahamove":"t-aha","Shopee":"t-shopee","TikTok":"t-tiktok"}[c]||"t-xanh");
+function normCarrier(c){ c=norm(c); if(!c) return null; if(c.includes("xanh")||c.includes("green"))return "Xanh SM"; if(c.includes("grab"))return "Grab"; if(c.includes("aha"))return "Ahamove"; return null; }
+
+// gộp 1 đơn -> kết quả hiển thị (aiRow tùy chọn)
+function analyze(o,aiRow){
+  const plat=platformOf(o);
+  if(plat==="SHOPEE") return {carrier:"Shopee",cls:"t-shopee",reason:"Tài xế Shopee giao, không đặt ngoài.",self:false};
+  if(plat==="TIKTOK") return {carrier:"TikTok",cls:"t-tiktok",reason:"Đối tác TikTok Shop giao.",self:false};
+  const sz=sizeOf(o), peak=peakOf(o.time);
+  let z=zoneOf(o.addr), km=KM[z];
+  let carrier,cls,reason;
+  if(aiRow){
+    const aikm=parseFloat(aiRow.km); if(aikm>0) km=aikm;
+    if(["trung tâm","khác","xa"].includes(aiRow.zone)) z=aiRow.zone;
+    carrier = normCarrier(aiRow.carrier);
+    reason = (aiRow.reason||"").toString();
+    if(sz.large) carrier="Ahamove"; // guardrail: đơn lớn buộc Ahamove
+    if(!carrier){ const r=ruleDecide(o,sz,z,peak); carrier=r.carrier; if(!reason) reason=r.reason; }
+    cls=clsOf(carrier);
+    if(sz.large && !/ahamove/i.test(reason)) reason="Đơn lớn/cồng kềnh → Ahamove "+(sz.veryLarge?"van":"xe máy")+" (Xanh SM chỉ xe nhỏ).";
+  } else {
+    const r=ruleDecide(o,sz,z,peak); carrier=r.carrier; cls=r.cls; reason=r.reason;
+  }
+  const ps=priceSet(km,peak,sz.veryLarge,sz.large);
+  return {carrier,cls,reason,self:true,km,zone:z,peak,prices:ps.prices,cheapest:ps.cheapest,ahaLabel:ps.ahaLabel,recCost:ps.prices[carrier]};
+}
+
+// ----- AI: chạy qua Cowork (askClaude) HOẶC backend /api/classify (khi deploy web) -----
+function aiAvailable(){
+  if(window.cowork && typeof window.cowork.askClaude==="function") return true;     // trong Cowork
+  return location.protocol==="http:" || location.protocol==="https:";              // có backend khi chạy trên web
+}
+function buildPrompt(items){
+  return `Bạn là điều phối giao hàng của một tiệm bánh tại TP.HCM. Kho/điểm lấy hàng (depot): ${DEPOT}.
+Với mỗi đơn TỰ ĐẶT (không phải Shopee/TikTok), chọn đúng 1 hãng giao trong: "Xanh SM", "Grab", "Ahamove".
+Nguyên tắc:
+- Xanh SM: xe máy nhỏ, tài xế ổn định, giá tốt, hợp đơn nhỏ/dễ vỡ ở khu trung tâm gần depot.
+- Grab: mạng lưới rộng, nhiều tài xế, hợp khu xa/ngoại thành hoặc giờ cao điểm (11-13h30, 17-20h30).
+- Ahamove: dùng cho đơn LỚN/cồng kềnh (set nhiều ly mica, ≥4kg) hoặc cần van (≥8kg) — vì Xanh SM/Grab chỉ xe nhỏ.
+Hãy ước "km" = khoảng cách thực tế ước lượng từ depot đến địa chỉ khách (số, theo đường bộ TP.HCM), và "zone" = một trong "trung tâm" | "khác" | "xa".
+CHỈ trả về JSON array, không thêm chữ nào khác. Mỗi phần tử: {"i":<số>,"carrier":"Xanh SM|Grab|Ahamove","km":<số>,"zone":"trung tâm|khác|xa","reason":"<1 câu ngắn tiếng Việt>"}.
+Dữ liệu đơn: ${JSON.stringify(items)}`;
+}
+async function aiClassify(orders){
+  const items=orders.map((o,i)=>({i,nen_tang:o.plat,dia_chi:o.addr,gio_giao:o.time,hang_hoa:o.prod,trong_luong_kg:o.weight}));
+  if(window.cowork && typeof window.cowork.askClaude==="function"){
+    const r=await window.cowork.askClaude(buildPrompt(items), items);
+    let text = typeof r==="string" ? r : (r && (r.text || (r.content && r.content[0] && r.content[0].text))) || JSON.stringify(r);
+    const m=text.match(/\[[\s\S]*\]/); if(!m) throw new Error("Không đọc được JSON từ AI"); return JSON.parse(m[0]);
+  }
+  // chạy trên web -> gọi backend
+  const resp=await fetch("/api/classify",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({items,depot:DEPOT})});
+  const data=await resp.json();
+  if(!resp.ok || data.error) throw new Error(data.error||("HTTP "+resp.status));
+  return data.result||[];
+}
+
+function splitLine(line){
+  if(line.includes("\t")) return line.split("\t");
+  const out=[]; let cur="", q=false;
+  for(let i=0;i<line.length;i++){ const ch=line[i];
+    if(q){ if(ch==='"'){ if(line[i+1]==='"'){cur+='"';i++;} else q=false; } else cur+=ch; }
+    else { if(ch==='"') q=true; else if(ch===',') {out.push(cur);cur="";} else cur+=ch; } }
+  out.push(cur); return out;
+}
+function findCol(H,keys){ for(let i=0;i<H.length;i++){ const h=norm(H[i]); if(keys.some(k=>h.includes(k))) return i; } return -1; }
+function parseInput(txt){
+  const rows=txt.split(/\r?\n/).filter(l=>l.trim()).map(l=>splitLine(l).map(s=>s.trim()));
+  if(!rows.length) return [];
+  const first=rows[0].map(norm).join("|");
+  let map=null, start=0;
+  if(/nền tảng|nen tang|địa chỉ|dia chi|tên hàng|ten hang|hàng hóa|hang hoa/.test(first)){
+    const H=rows[0];
+    map={ plat:findCol(H,["nền tảng","nen tang","platform","kênh","kenh"]),
+          code:findCol(H,["mã đơn","ma don","order"]),
+          addr:findCol(H,["địa chỉ","dia chi","address"]),
+          weight:findCol(H,["trọng lượng","trong luong","khối lượng","khoi luong","kg"]),
+          time:findCol(H,["giờ","gio","time"]),
+          xe:findCol(H,["xe","phương tiện","phuong tien"]),
+          prod:findCol(H,["tên hàng","ten hang","hàng hóa","hang hoa","sản phẩm","san pham","mặt hàng","mat hang"]) };
+    start=1;
+  }
+  const out=[];
+  for(let r=start;r<rows.length;r++){ const c=rows[r];
+    let m;
+    if(map) m=map;                              // có tiêu đề → khớp theo tên cột
+    else {                                       // không tiêu đề → đoán theo SỐ CỘT
+      const n=c.length;
+      if(n>=9)      m={plat:0,code:1,addr:4,weight:5,time:6,xe:7,prod:8};   // đủ + XE
+      else if(n===8)m={plat:0,code:1,addr:4,weight:5,time:6,xe:-1,prod:7};  // đủ (tên+sđt)
+      else if(n===7)m={plat:0,code:1,addr:2,weight:3,time:4,xe:5,prod:6};   // bỏ tên/sđt + XE
+      else if(n===6)m={plat:0,code:1,addr:2,weight:3,time:4,xe:-1,prod:5};  // bỏ tên/sđt
+      else          m={plat:0,code:1,addr:2,weight:-1,time:-1,xe:-1,prod:n-1};
+    }
+    const g=i=>i>=0&&i<c.length?(c[i]||""):"";
+    out.push({plat:g(m.plat),code:g(m.code),name:"",phone:"",addr:g(m.addr),weight:g(m.weight),time:g(m.time),xe:g(m.xe),prod:g(m.prod)});
+  }
+  return out;
+}
+const esc=s=>(s||"").replace(/[&<>]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]));
+
+function priceCell(a,key){
+  if(!a.self) return `<td class="pcell"><span class="na">—</span></td>`;
+  const v=a.prices[key];
+  if(v==null) return `<td class="pcell"><span class="na" title="Chỉ xe nhỏ, không chở đơn lớn">—</span></td>`;
+  const best=a.cheapest===key, rec=a.carrier===key, label=key==="Ahamove"?a.ahaLabel:"";
+  let badges=""; if(rec) badges+=`<span class="badge b-rec">ĐỀ XUẤT</span>`; if(best) badges+=` <span class="badge b-best">RẺ NHẤT</span>`;
+  return `<td class="pcell ${best?"best":""} ${rec?"rec":""}"><div class="p">${vnd(v)}</div>${label?`<div class="muted">${label}</div>`:""}<div>${badges}</div></td>`;
+}
+
+function setMode(mode,note){
+  const t=document.getElementById("modeTag");
+  if(mode==="ai"){ t.className="modetag m-ai"; t.textContent="🤖 AI (Claude)"; }
+  else { t.className="modetag m-rule"; t.textContent="⚙️ Quy tắc"; }
+  document.getElementById("modeNote").textContent=note||"";
+}
+
+async function run(){
+  readSettings();
+  const orders=parseInput(document.getElementById("input").value);
+  const res=document.getElementById("result"), kp=document.getElementById("kpis");
+  if(!orders.length){ res.innerHTML="<div class='card'>Chưa có đơn. Dán dữ liệu vào ô rồi bấm Đề xuất.</div>"; kp.innerHTML=""; setMode("rule",""); return; }
+
+  const wantAI=document.getElementById("useAI").checked;
+  let ai=null, note="";
+  if(wantAI && aiAvailable()){
+    const btn=document.getElementById("goBtn"); btn.disabled=true;
+    res.innerHTML=`<div class="card loading"><span class="spin"></span>Claude đang đọc & phân loại ${orders.length} đơn…</div>`; kp.innerHTML="";
+    try{ ai=await aiClassify(orders); setMode("ai","Claude đã phân loại "+ai.length+" đơn."); }
+    catch(e){ ai=null; setMode("rule","Không gọi được AI ("+e.message+") → dùng quy tắc."); }
+    btn.disabled=false;
+  } else if(wantAI && !aiAvailable()){
+    setMode("rule","Mở trong Cowork để bật AI; hiện đang dùng quy tắc.");
+  } else { setMode("rule",""); }
+
+  const byIdx = ai ? Object.fromEntries(ai.map(r=>[r.i,r])) : null;
+  let total=0,opt=0,cntSelf=0,rows="";
+  orders.forEach((o,i)=>{
+    const a=analyze(o, byIdx?byIdx[i]:null);
+    if(a.self){ total+=a.recCost; opt+=a.prices[a.cheapest]; cntSelf++; }
+    rows+=`<tr>
+      <td>${i+1}</td>
+      <td><div class="code">${esc(o.code)||"-"}</div><div class="plat">${esc(o.plat)}</div><div class="prod">${esc(o.prod)}</div></td>
+      <td class="addr">${esc(o.addr)||"-"}<div class="meta">${esc(o.time)} · ~${a.km||"-"}km · ${a.zone||""}</div></td>
+      ${priceCell(a,"Xanh SM")}${priceCell(a,"Grab")}${priceCell(a,"Ahamove")}
+      <td><span class="tag ${a.cls}">${a.carrier}</span><div class="reason">${esc(a.reason)}</div></td>
+    </tr>`;
+  });
+  const save=total-opt;
+  kp.innerHTML=`<div class="kpis">
+    <div class="kpi"><div class="v">${orders.length}</div><div class="k">đơn (${cntSelf} cần đặt xe)</div></div>
+    <div class="kpi"><div class="v">${vnd(total)}</div><div class="k">Tổng cước theo đề xuất</div></div>
+    <div class="kpi green"><div class="v">${vnd(save)}</div><div class="k">Tiết kiệm nếu chọn rẻ nhất</div></div></div>`;
+  res.innerHTML=`<div class="tbl-wrap"><table>
+    <thead><tr><th>#</th><th>Đơn</th><th>Giao đến</th>
+      <th class="th-c th-xanh">Xanh SM</th><th class="th-c th-grab">Grab</th><th class="th-c th-aha">Ahamove</th><th>✅ Đề xuất</th></tr></thead>
+    <tbody>${rows}</tbody></table></div>`;
+  document.getElementById("status").textContent=`Đã phân tích ${orders.length} đơn.`;
+}
+
+function clearAll(){ document.getElementById("input").value=""; document.getElementById("result").innerHTML=""; document.getElementById("kpis").innerHTML=""; document.getElementById("status").textContent=""; document.getElementById("modeNote").textContent=""; }
+function loadFile(f){ if(!f) return; const r=new FileReader();
+  r.onload=e=>{ document.getElementById("input").value=e.target.result; document.getElementById("status").textContent="Đã nạp file: "+f.name; run(); };
+  r.readAsText(f,"utf-8"); }
+
+// hiển thị trạng thái AI khả dụng khi mở trang
+setMode("rule", aiAvailable() ? "AI sẵn sàng — bấm Đề xuất để Claude phân loại." : "Đang ở chế độ quy tắc (mở trong Cowork để dùng AI).");
+</script>
+</body>
+</html>
